@@ -1,6 +1,7 @@
 package com.amouri_dev.stockflow.security;
 
 import com.amouri_dev.stockflow.common.User;
+import com.amouri_dev.stockflow.common.UserStatus;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -49,7 +50,7 @@ public class AppUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return !user.isLocked();
     }
 
     @Override
@@ -59,6 +60,6 @@ public class AppUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return !user.isDeleted();
+        return user.getUserStatus() == UserStatus.ACTIVE;
     }
 }

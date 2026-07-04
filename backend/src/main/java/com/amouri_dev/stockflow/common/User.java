@@ -29,6 +29,16 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private String lastName;
 
+    @Column(nullable = false)
+    private boolean isEnabled = false;
+
+    @Column(nullable = false)
+    private boolean isLocked = false;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserStatus userStatus = UserStatus.PENDING;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "user_roles",
@@ -36,7 +46,5 @@ public class User extends BaseEntity {
     )
     @Column(name = "role")
     private Set<UserRole> roles = new HashSet<>();
-
-    private boolean isDeleted = false;
 
 }
