@@ -5,16 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f24f314b-3696-4812-93b3-3b4858f2457b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/com/amouri_dev/stockflow/common/UserStatus.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/compose.yaml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/amouri_dev/stockflow/common/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/amouri_dev/stockflow/common/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/amouri_dev/stockflow/security/AppUserDetails.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/amouri_dev/stockflow/security/AppUserDetails.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/amouri_dev/stockflow/security/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/amouri_dev/stockflow/security/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/amouri_dev/stockflow/security/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/amouri_dev/stockflow/security/UserRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/amouri_dev/stockflow/common/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/amouri_dev/stockflow/common/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/amouri_dev/stockflow/security/JwtAuthenticationEntryPoint.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/amouri_dev/stockflow/security/JwtAuthenticationEntryPoint.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/amouri_dev/stockflow/security/RefreshTokenRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/amouri_dev/stockflow/security/RefreshTokenRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/com/amouri_dev/stockflow/security/RestAccessDeniedHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/com/amouri_dev/stockflow/security/RestAccessDeniedHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -45,6 +40,10 @@
     &quot;accountId&quot;: &quot;5eea19be-de31-4fd9-ad45-74a9a0a5dd76&quot;
   }
 }</component>
+  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
+  <component name="KubernetesApiProvider"><![CDATA[{
+  "isMigrated": true
+}]]></component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
@@ -139,7 +138,7 @@
       <workItem from="1783161348407" duration="1488000" />
       <workItem from="1783163001782" duration="260000" />
       <workItem from="1783163501365" duration="131000" />
-      <workItem from="1783163700419" duration="1343000" />
+      <workItem from="1783163700419" duration="4000000" />
     </task>
     <servers />
   </component>

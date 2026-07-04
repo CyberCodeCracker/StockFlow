@@ -1,39 +1,29 @@
 package com.amouri_dev.stockflow.security;
 
-import com.amouri_dev.stockflow.common.ApiError;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
-
-import java.io.IOException;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 /**
- * Returns a 401 with the standard {@link ApiError} body when an unauthenticated
- * request hits a protected endpoint (fires inside the security filter chain).
+ * Fires when an unauthenticated request hits a protected endpoint. Delegates to the MVC
+ * exception resolver so the response is formatted by the single GlobalExceptionHandler.
  */
 @Component
-@RequiredArgsConstructor
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-    private final ObjectMapper objectMapper;
+    private final HandlerExceptionResolver resolver;
+
+    public JwtAuthenticationEntryPoint(@Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
+        this.resolver = resolver;
+    }
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
-                         AuthenticationException authException) throws IOException {
-        ApiError body = ApiError.of(
-                HttpStatus.UNAUTHORIZED.value(),
-                HttpStatus.UNAUTHORIZED.getReasonPhrase(),
-                "Authentication required",
-                request.getRequestURI()
-        );
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        objectMapper.writeValue(response.getWriter(), body);
+                         AuthenticationException authException) {
+        resolver.resolveException(request, response, null, authException);
     }
 }
