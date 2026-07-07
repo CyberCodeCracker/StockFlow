@@ -1,0 +1,293 @@
+{
+  "info": {
+    "name": "StockFlow API",
+    "description": "StockFlow backend — auth, users, catalog, warehouse, inventory. Login first: it auto-saves accessToken & refreshToken to collection variables, and every other request inherits Bearer {{accessToken}}.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{accessToken}}", "type": "string" }]
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080/api/v1" },
+    { "key": "accessToken", "value": "" },
+    { "key": "refreshToken", "value": "" },
+    { "key": "adminEmail", "value": "admin@stockflow.local" },
+    { "key": "adminPassword", "value": "admin12345" },
+    { "key": "userId", "value": "" },
+    { "key": "productId", "value": "" },
+    { "key": "warehouseId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register (public)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/register", "host": ["{{baseUrl}}"], "path": ["auth", "register"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"firstName\": \"Sara\",\n  \"lastName\": \"Amouri\",\n  \"email\": \"sara@example.com\",\n  \"password\": \"password123\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Login (public) — saves tokens",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const b = pm.response.json();",
+                  "  pm.collectionVariables.set('accessToken', b.accessToken);",
+                  "  pm.collectionVariables.set('refreshToken', b.refreshToken);",
+                  "  console.log('Saved access + refresh tokens');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/login", "host": ["{{baseUrl}}"], "path": ["auth", "login"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminPassword}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Refresh — rotates & saves tokens",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "  const b = pm.response.json();",
+                  "  pm.collectionVariables.set('accessToken', b.accessToken);",
+                  "  pm.collectionVariables.set('refreshToken', b.refreshToken);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/refresh", "host": ["{{baseUrl}}"], "path": ["auth", "refresh"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Me (Bearer)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/auth/me", "host": ["{{baseUrl}}"], "path": ["auth", "me"] }
+          }
+        },
+        {
+          "name": "Logout (Bearer)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/auth/logout", "host": ["{{baseUrl}}"], "path": ["auth", "logout"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Users (ADMIN)",
+      "item": [
+        {
+          "name": "List pending — saves first userId",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const b = pm.response.json();",
+                  "if (Array.isArray(b) && b.length) pm.collectionVariables.set('userId', b[0].id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/users/pending", "host": ["{{baseUrl}}"], "path": ["users", "pending"] }
+          }
+        },
+        {
+          "name": "Approve user (assign roles)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/users/{{userId}}/approve", "host": ["{{baseUrl}}"], "path": ["users", "{{userId}}", "approve"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"roles\": [\"MANAGER\"]\n}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Create product — saves productId",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) pm.collectionVariables.set('productId', pm.response.json().id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/products", "host": ["{{baseUrl}}"], "path": ["products"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sku\": \"MBP-16\",\n  \"name\": \"MacBook Pro 16\",\n  \"description\": \"M4 laptop\",\n  \"unitPrice\": 2999.99,\n  \"minStockLevel\": 5\n}"
+            }
+          }
+        },
+        {
+          "name": "List products",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/products", "host": ["{{baseUrl}}"], "path": ["products"] } }
+        },
+        {
+          "name": "Get product",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/products/{{productId}}", "host": ["{{baseUrl}}"], "path": ["products", "{{productId}}"] } }
+        },
+        {
+          "name": "Update product",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/products/{{productId}}", "host": ["{{baseUrl}}"], "path": ["products", "{{productId}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"sku\": \"MBP-16\",\n  \"name\": \"MacBook Pro 16 (M4 Max)\",\n  \"description\": \"updated\",\n  \"unitPrice\": 3499.00,\n  \"minStockLevel\": 8\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete product",
+          "request": { "method": "DELETE", "header": [], "url": { "raw": "{{baseUrl}}/products/{{productId}}", "host": ["{{baseUrl}}"], "path": ["products", "{{productId}}"] } }
+        }
+      ]
+    },
+    {
+      "name": "Warehouses",
+      "item": [
+        {
+          "name": "Create warehouse — saves warehouseId",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) pm.collectionVariables.set('warehouseId', pm.response.json().id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/warehouses", "host": ["{{baseUrl}}"], "path": ["warehouses"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"TUN\",\n  \"name\": \"Warehouse Tunis\",\n  \"location\": \"Tunis\"\n}"
+            }
+          }
+        },
+        {
+          "name": "List warehouses",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/warehouses", "host": ["{{baseUrl}}"], "path": ["warehouses"] } }
+        },
+        {
+          "name": "Get warehouse",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/warehouses/{{warehouseId}}", "host": ["{{baseUrl}}"], "path": ["warehouses", "{{warehouseId}}"] } }
+        },
+        {
+          "name": "Update warehouse",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/warehouses/{{warehouseId}}", "host": ["{{baseUrl}}"], "path": ["warehouses", "{{warehouseId}}"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"code\": \"TUN\",\n  \"name\": \"Warehouse Tunis Central\",\n  \"location\": \"Tunis\"\n}"
+            }
+          }
+        },
+        {
+          "name": "Delete warehouse",
+          "request": { "method": "DELETE", "header": [], "url": { "raw": "{{baseUrl}}/warehouses/{{warehouseId}}", "host": ["{{baseUrl}}"], "path": ["warehouses", "{{warehouseId}}"] } }
+        }
+      ]
+    },
+    {
+      "name": "Inventory",
+      "item": [
+        {
+          "name": "Init inventory (product x warehouse)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "url": { "raw": "{{baseUrl}}/inventory", "host": ["{{baseUrl}}"], "path": ["inventory"] },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"productId\": \"{{productId}}\",\n  \"warehouseId\": \"{{warehouseId}}\"\n}"
+            }
+          }
+        },
+        {
+          "name": "List inventory (all)",
+          "request": { "method": "GET", "header": [], "url": { "raw": "{{baseUrl}}/inventory", "host": ["{{baseUrl}}"], "path": ["inventory"] } }
+        },
+        {
+          "name": "List inventory by warehouse",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/inventory?warehouseId={{warehouseId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["inventory"],
+              "query": [{ "key": "warehouseId", "value": "{{warehouseId}}" }]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
